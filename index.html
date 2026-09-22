@@ -1,13 +1,4 @@
 <!DOCTYPE html>
-<!--
-Created using JS Bin
-http://jsbin.com
-
-Copyright (c) 2026 by anonymous (http://jsbin.com/vovemeneni/1/edit)
-
-Released under the MIT license: http://jsbin.mit-license.org
--->
-<meta name="robots" content="noindex">
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -35,11 +26,21 @@ Released under the MIT license: http://jsbin.mit-license.org
             100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
 
-        /* ANIMASI SCROLL & ROLL REEL KOTAK HEADER */
-        @keyframes headerSlotRoll {
-            0% { transform: translateY(-8px) scale(0.95); opacity: 0.8; }
-            50% { transform: translateY(8px) scale(1.05); opacity: 1; filter: drop-shadow(0 0 8px #FFE259); }
-            100% { transform: translateY(-8px) scale(0.95); opacity: 0.8; }
+        /* ANIMASI GETAR REEL SAAT SPINNING (RUMBLE) */
+        @keyframes reelRumble {
+            0% { transform: translateY(-3px) scale(1.02); }
+            50% { transform: translateY(3px) scale(0.98); }
+            100% { transform: translateY(-3px) scale(1.02); }
+        }
+
+        /* ANIMASI HEBAT SAAT REEL TERKUNCI (ULTRA HARD SHAKE) */
+        @keyframes reelLockShake {
+            0% { transform: scale(1) rotate(0deg); }
+            20% { transform: scale(1.35) translate(-6px, -8px) rotate(-6deg); background-color: #FFE259; color: #7F1D1D; }
+            40% { transform: scale(1.4) translate(6px, 8px) rotate(6deg); background-color: #FFE259; color: #7F1D1D; }
+            60% { transform: scale(1.2) translate(-4px, 4px) rotate(-3deg); }
+            80% { transform: scale(1.1) translate(4px, -4px) rotate(3deg); }
+            100% { transform: scale(1) translate(0, 0) rotate(0deg); }
         }
 
         body {
@@ -52,31 +53,55 @@ Released under the MIT license: http://jsbin.mit-license.org
             animation: pulseGlow 3s infinite ease-in-out;
         }
 
-        /* BINGKAI KOTAK SLOT MACHINE HEADER */
-        .slot-frame-header {
-            background: linear-gradient(180deg, #7F1D1D 0%, #450A0A 100%);
-            border: 3px solid #FBBF24;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 15px rgba(234, 179, 8, 0.4);
+        /* DESAIN HEADER MESIN SLOT PERAK DENGAN TUAS (TANPA KUBAH 777) */
+        .hdr-slot-body {
+            background: linear-gradient(180deg, #D1D5DB 0%, #9CA3AF 50%, #6B7280 100%);
+            border: 3px solid #E5E7EB;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.8);
         }
 
-        .header-slot-box {
-            width: 2.8rem;
-            height: 3.5rem;
+        /* SILINDER REEL PUTIH DENGAN CURVE SEPERTI GAMBAR */
+        .hdr-reel-cylinder {
+            width: 2.6rem;
+            height: 3.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(180deg, #111827 0%, #1F2937 50%, #111827 100%);
-            border: 2px solid #F32424;
+            background: linear-gradient(180deg, #E5E7EB 0%, #FFFFFF 30%, #FFFFFF 70%, #D1D5DB 100%);
+            border: 2px solid #4B5563;
             border-radius: 0.75rem;
-            font-size: 1.6rem;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.9);
-            transition: all 0.1s ease-in-out;
+            font-size: 1.8rem;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.25), inset 0 -4px 6px rgba(0,0,0,0.25);
+            animation: reelRumble 0.12s infinite ease-in-out;
+        }
+        
+        /* CLASS SLOTS MODAL POPUP */
+        .slot-reel {
+            width: 3.2rem;
+            height: 4.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #4A0404 0%, #991B1B 50%, #4A0404 100%);
+            border: 3px solid #FBBF24;
+            border-radius: 0.75rem;
+            font-size: 2.25rem;
+            font-weight: 900;
+            color: #FFE259;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.8), 0 4px 10px rgba(0,0,0,0.5);
+            font-family: monospace;
         }
 
-        .slot-rolling-active {
-            animation: headerSlotRoll 0.18s infinite ease-in-out;
-            border-color: #FFE259 !important;
-            box-shadow: 0 0 12px #FFE259 !important;
+        .reel-spinning {
+            animation: reelRumble 0.07s infinite ease-in-out;
+            border-color: #EF4444;
+            color: #FFFFFF;
+        }
+
+        .reel-shake-locked {
+            animation: reelLockShake 0.6s ease-out forwards;
+            border-color: #FFFFFF !important;
+            box-shadow: 0 0 20px #FFE259, 0 0 30px #FF0000 !important;
         }
 
         .gold-shimmer-text {
@@ -115,16 +140,33 @@ Released under the MIT license: http://jsbin.mit-license.org
     <!-- CONTAINER FORM PESERTA -->
     <div id="mainContainer" class="w-full max-w-md bg-white rounded-3xl overflow-hidden heboh-card border-2 border-yellow-500/60 my-6 relative">
         
-        <!-- HEADER FORM DENGAN SLOT MACHINE KOTAK BERPUTAR REALISTIS -->
+        <!-- HEADER FORM DENGAN MESIN SLOT DISAMBUNGKAN -->
         <div class="bg-gradient-to-r from-red-950 via-red-900 to-red-950 p-6 text-center border-b-4 border-yellow-500 relative overflow-hidden">
             <div class="absolute -top-10 -right-10 w-28 h-28 bg-yellow-500/20 rounded-full blur-xl"></div>
             <div class="absolute -bottom-10 -left-10 w-28 h-28 bg-yellow-500/20 rounded-full blur-xl"></div>
             
-            <!-- FRAME SLOT MACHINE DI HEADER -->
-            <div class="inline-flex items-center justify-center gap-2.5 p-2.5 rounded-2xl slot-frame-header mb-3">
-                <div id="hdrSlot1" class="header-slot-box slot-rolling-active">🎰</div>
-                <div id="hdrSlot2" class="header-slot-box slot-rolling-active">👑</div>
-                <div id="hdrSlot3" class="header-slot-box slot-rolling-active">💎</div>
+            <!-- MESIN SLOT HEADER BENTUK PERAK SESUAI REFERENSI GAMBAR (TANPA KUBAH 777) -->
+            <div class="relative w-40 mx-auto mb-3 pt-2 pr-5">
+
+                <!-- TUAS MERAH KASINO DI SAMPING KANAN -->
+                <div class="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col items-center z-10">
+                    <div class="w-4 h-4 rounded-full bg-red-600 border border-white shadow"></div>
+                    <div class="w-1.5 h-8 bg-gray-300 mx-auto"></div>
+                    <div class="w-4 h-3.5 bg-gray-600 rounded border border-gray-400"></div>
+                </div>
+
+                <!-- BODI UTUH PERAK DENGAN LENGKUNGAN ATAS -->
+                <div class="hdr-slot-body rounded-t-3xl rounded-b-xl p-2.5 relative">
+                    <!-- JENDELA HITAM TEMPAT 3 REEL SILINDER PUTIH BERPUTAR -->
+                    <div class="bg-slate-900 p-2 rounded-xl border border-slate-700 flex items-center justify-center gap-1.5 shadow-inner">
+                        <div id="hdrSlot1" class="hdr-reel-cylinder">👑</div>
+                        <div id="hdrSlot2" class="hdr-reel-cylinder">👑</div>
+                        <div id="hdrSlot3" class="hdr-reel-cylinder">🍒</div>
+                    </div>
+
+                    <!-- ALAS BASE MESIN -->
+                    <div class="bg-slate-700 h-2.5 mt-2 rounded-md border-t border-slate-500"></div>
+                </div>
             </div>
 
             <h1 class="text-2xl font-black tracking-wider uppercase gold-shimmer-text">LUCKYDRAW SPEKTAKULER</h1>
@@ -195,21 +237,27 @@ Released under the MIT license: http://jsbin.mit-license.org
         </div>
     </div>
 
-    <!-- MODAL POPUP SUKSES DENGAN DISPLAY KODE TIKET UNIK -->
+    <!-- MODAL POPUP SUKSES DENGAN 4-REELS SLOT MACHINE UI -->
     <div id="successModal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden z-50">
         <div id="modalBox" class="bg-white rounded-3xl max-w-sm w-full p-6 text-center card-shadow border-4 border-yellow-500 relative transform transition-all scale-100">
             <div class="w-20 h-20 bg-gradient-to-tr from-yellow-500 to-amber-300 text-red-950 rounded-full flex items-center justify-center mx-auto -mt-12 mb-3 text-3xl border-4 border-white shadow-xl animate-bounce">
                 <i class="fa-solid fa-crown"></i>
             </div>
-            
             <h3 class="text-2xl font-black text-gray-900 mb-1">SELAMAT! 🎉</h3>
             <p class="text-xs font-bold text-gray-500 mb-3">Pendaftaran Anda Berhasil Terdaftar!</p>
 
-            <!-- DISPLAY KODE TIKET UNIK 4-DIGIT -->
-            <div class="bg-gradient-to-br from-red-950 via-red-900 to-red-950 p-5 rounded-2xl border-2 border-yellow-400 shadow-inner mb-4 relative overflow-hidden">
-                <p class="text-[10px] text-yellow-300 font-black uppercase tracking-widest mb-1">KODE TIKET UNDIAN ANDA</p>
-                <div id="modalCode" class="text-5xl font-black gold-shimmer-text tracking-widest my-1 font-mono">----</div>
-                <p class="text-[9px] text-red-200 tracking-wider font-semibold uppercase">Simpan atau Screenshot Kode Ini</p>
+            <!-- TAMPILAN MESIN SLOT UI (4 REELS TERPISAH SEMUANYA SPINNING) -->
+            <div class="bg-gradient-to-br from-red-950 via-red-900 to-red-950 p-4 rounded-2xl border-2 border-yellow-400 shadow-inner mb-4 relative overflow-hidden">
+                <p class="text-[10px] text-yellow-300 font-black uppercase tracking-widest mb-2">KODE TIKET UNDIAN ANDA</p>
+                
+                <div class="flex items-center justify-center gap-2 my-2">
+                    <div id="reel1" class="slot-reel">-</div>
+                    <div id="reel2" class="slot-reel">-</div>
+                    <div id="reel3" class="slot-reel">-</div>
+                    <div id="reel4" class="slot-reel">-</div>
+                </div>
+
+                <p class="text-[9px] text-red-200 tracking-wider font-semibold uppercase mt-2">Simpan atau Screenshot Kode Ini</p>
             </div>
 
             <div class="bg-gray-50 rounded-xl p-3 text-xs text-gray-600 mb-4 border border-gray-200 text-left space-y-1">
@@ -241,8 +289,8 @@ Released under the MIT license: http://jsbin.mit-license.org
             }
         })();
 
-        // ANIMASI DYNAMIC SLOT REEL DI HEADER (KOTAK DENGAN EFEK ROLL VERTIKAL)
-        const CASINO_SYMBOLS = ["🍒", "💎", "👑", "🌟", "🔥", "🎰", "7️⃣"];
+        // ANIMASI MESIN SLOT HEADER BERPUTAR PADA SILINDER PUTIH
+        const CASINO_SYMBOLS = ["👑", "🍒", "💎", "🌟", "🔥", "🎰", "7️⃣"];
         function startHeaderSlotAnimation() {
             const h1 = document.getElementById('hdrSlot1');
             const h2 = document.getElementById('hdrSlot2');
@@ -314,26 +362,52 @@ Released under the MIT license: http://jsbin.mit-license.org
             return uniqueCode;
         }
 
-        // ANIMASI ROLLING NOMOR TIKET SAAT SUBMIT SUKSES
-        function animateCodeRoll(targetCode, callback) {
-            const modalCode = document.getElementById('modalCode');
-            let duration = 1200;
-            let intervalTime = 50;
-            let elapsed = 0;
+        // FUNGSI ANIMASI REAL SLOT MACHINE 4 REELS (SEMUA ANGKA BERPUTAR & BERGETAR)
+        function animateRealSlotMachine(targetCode, callback) {
+            const digit1 = targetCode.charAt(0);
+            const digit2 = targetCode.charAt(1);
+            const digit3 = targetCode.charAt(2);
+            const digit4 = targetCode.charAt(3);
 
-            const prefix = targetCode.charAt(0);
+            const reel1 = document.getElementById('reel1');
+            const reel2 = document.getElementById('reel2');
+            const reel3 = document.getElementById('reel3');
+            const reel4 = document.getElementById('reel4');
 
-            const interval = setInterval(() => {
-                elapsed += intervalTime;
-                const random3 = Math.floor(100 + Math.random() * 900);
-                modalCode.innerText = prefix + random3;
+            [reel1, reel2, reel3, reel4].forEach(r => {
+                r.className = 'slot-reel reel-spinning';
+            });
 
-                if (elapsed >= duration) {
-                    clearInterval(interval);
-                    modalCode.innerText = targetCode;
-                    if (callback) callback();
-                }
-            }, intervalTime);
+            const int1 = setInterval(() => { reel1.innerText = Math.floor(Math.random() * 10); }, 50);
+            const int2 = setInterval(() => { reel2.innerText = Math.floor(Math.random() * 10); }, 50);
+            const int3 = setInterval(() => { reel3.innerText = Math.floor(Math.random() * 10); }, 50);
+            const int4 = setInterval(() => { reel4.innerText = Math.floor(Math.random() * 10); }, 50);
+
+            setTimeout(() => {
+                clearInterval(int1);
+                reel1.innerText = digit1;
+                reel1.className = 'slot-reel reel-shake-locked';
+            }, 600);
+
+            setTimeout(() => {
+                clearInterval(int2);
+                reel2.innerText = digit2;
+                reel2.className = 'slot-reel reel-shake-locked';
+            }, 1100);
+
+            setTimeout(() => {
+                clearInterval(int3);
+                reel3.innerText = digit3;
+                reel3.className = 'slot-reel reel-shake-locked';
+            }, 1600);
+
+            setTimeout(() => {
+                clearInterval(int4);
+                reel4.innerText = digit4;
+                reel4.className = 'slot-reel reel-shake-locked';
+
+                if (callback) callback();
+            }, 2100);
         }
 
         function triggerCoinShower() {
@@ -399,29 +473,17 @@ Released under the MIT license: http://jsbin.mit-license.org
                 return;
             }
 
-            // CEK EMAIL GANDA / DUPLIKAT
-            let registeredEmails = JSON.parse(localStorage.getItem('luckydraw_registered_emails') || '[]');
-            if (registeredEmails.includes(email)) {
-                errorAlert.innerText = "Email ini sudah terdaftar! Setiap email hanya berhak mendapatkan 1 tiket.";
-                errorAlert.classList.remove('hidden');
-                return;
-            }
-
             const uniqueCode = generateUniqueCode(position);
 
             btnSubmit.disabled = true;
             btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Menerbitkan Tiket...</span>`;
 
-            // SIMPAN EMAIL KE DAFTAR TERDAFTAR
-            registeredEmails.push(email);
-            localStorage.setItem('luckydraw_registered_emails', JSON.stringify(registeredEmails));
-
             document.getElementById('modalName').innerText = name;
             document.getElementById('modalEmail').innerText = email;
             document.getElementById('successModal').classList.remove('hidden');
 
-            // ANIMASI ROLLING KODE UNIK
-            animateCodeRoll(uniqueCode, () => {
+            // JALANKAN MESIN SLOT UI REAL (4 REELS SLOTS)
+            animateRealSlotMachine(uniqueCode, () => {
                 triggerConfetti();
                 triggerCoinShower();
                 playVictorySound();
@@ -452,6 +514,5 @@ Released under the MIT license: http://jsbin.mit-license.org
             document.getElementById('successModal').classList.add('hidden');
         }
     </script>
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"480c9d8468c44ad3bed3c74fbcc6d6f3","r":1,"spa":2}' crossorigin="anonymous"></script>
 </body>
 </html>
