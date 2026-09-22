@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<!--
+Created using JS Bin
+http://jsbin.com
+
+Copyright (c) 2026 by anonymous (http://jsbin.com/vovemeneni/1/edit)
+
+Released under the MIT license: http://jsbin.mit-license.org
+-->
+<meta name="robots" content="noindex">
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUCKYDRAW SPEKTAKULER - Registrasi Peserta</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 25px rgba(234, 179, 8, 0.4), 0 20px 50px rgba(0, 0, 0, 0.7); }
+            50% { box-shadow: 0 0 45px rgba(234, 179, 8, 0.8), 0 20px 50px rgba(0, 0, 0, 0.9); }
+        }
+        @keyframes goldShimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        @keyframes coinFall {
+            0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* ANIMASI SCROLL & ROLL REEL KOTAK HEADER */
+        @keyframes headerSlotRoll {
+            0% { transform: translateY(-8px) scale(0.95); opacity: 0.8; }
+            50% { transform: translateY(8px) scale(1.05); opacity: 1; filter: drop-shadow(0 0 8px #FFE259); }
+            100% { transform: translateY(-8px) scale(0.95); opacity: 0.8; }
+        }
+
+        body {
+            background: radial-gradient(circle at center, #800A0A 0%, #4A0404 50%, #1A0000 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+        }
+        .heboh-card {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        /* BINGKAI KOTAK SLOT MACHINE HEADER */
+        .slot-frame-header {
+            background: linear-gradient(180deg, #7F1D1D 0%, #450A0A 100%);
+            border: 3px solid #FBBF24;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 0 15px rgba(234, 179, 8, 0.4);
+        }
+
+        .header-slot-box {
+            width: 2.8rem;
+            height: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, #111827 0%, #1F2937 50%, #111827 100%);
+            border: 2px solid #F32424;
+            border-radius: 0.75rem;
+            font-size: 1.6rem;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.9);
+            transition: all 0.1s ease-in-out;
+        }
+
+        .slot-rolling-active {
+            animation: headerSlotRoll 0.18s infinite ease-in-out;
+            border-color: #FFE259 !important;
+            box-shadow: 0 0 12px #FFE259 !important;
+        }
+
+        .gold-shimmer-text {
+            background: linear-gradient(90deg, #FFE259 0%, #FFA751 50%, #FFE259 100%);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            animation: goldShimmer 3s linear infinite;
+        }
+        
+        /* Sparkle & Coins */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            color: #FFDF00;
+            font-size: 14px;
+            animation: fadeSparkle 0.8s linear forwards;
+            z-index: 9999;
+        }
+        @keyframes fadeSparkle {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: scale(0.2) rotate(180deg) translateY(15px); opacity: 0; }
+        }
+        .falling-coin {
+            position: fixed;
+            top: -40px;
+            pointer-events: none;
+            z-index: 9998;
+            font-size: 26px;
+            animation: coinFall 2.5s ease-in forwards;
+        }
+    </style>
+</head>
+<body id="bodyApp" class="flex items-center justify-center p-4">
+
+    <!-- CONTAINER FORM PESERTA -->
+    <div id="mainContainer" class="w-full max-w-md bg-white rounded-3xl overflow-hidden heboh-card border-2 border-yellow-500/60 my-6 relative">
+        
+        <!-- HEADER FORM DENGAN SLOT MACHINE KOTAK BERPUTAR REALISTIS -->
+        <div class="bg-gradient-to-r from-red-950 via-red-900 to-red-950 p-6 text-center border-b-4 border-yellow-500 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-28 h-28 bg-yellow-500/20 rounded-full blur-xl"></div>
+            <div class="absolute -bottom-10 -left-10 w-28 h-28 bg-yellow-500/20 rounded-full blur-xl"></div>
+            
+            <!-- FRAME SLOT MACHINE DI HEADER -->
+            <div class="inline-flex items-center justify-center gap-2.5 p-2.5 rounded-2xl slot-frame-header mb-3">
+                <div id="hdrSlot1" class="header-slot-box slot-rolling-active">🎰</div>
+                <div id="hdrSlot2" class="header-slot-box slot-rolling-active">👑</div>
+                <div id="hdrSlot3" class="header-slot-box slot-rolling-active">💎</div>
+            </div>
+
+            <h1 class="text-2xl font-black tracking-wider uppercase gold-shimmer-text">LUCKYDRAW SPEKTAKULER</h1>
+            <p class="text-xs text-yellow-200 mt-1 uppercase tracking-widest font-bold">✨ Registrasi Peserta Resmi ✨</p>
+        </div>
+
+        <!-- FORM REGISTRASI -->
+        <form id="registrationForm" class="p-6 space-y-4">
+            
+            <div id="errorAlert" class="hidden p-3 bg-red-100 border-l-4 border-red-600 text-red-700 text-xs rounded-lg font-bold"></div>
+
+            <!-- NAMA LENGKAP -->
+            <div>
+                <label class="block text-xs font-black text-gray-700 uppercase mb-1 tracking-wider">Nama Lengkap <span class="text-red-600">*</span></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-yellow-600">
+                        <i class="fa-solid fa-user text-sm"></i>
+                    </span>
+                    <input type="text" id="fullName" required placeholder="Masukkan nama lengkap Anda"
+                        class="w-full pl-10 pr-3 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:bg-white outline-none transition">
+                </div>
+            </div>
+
+            <!-- JABATAN -->
+            <div>
+                <label class="block text-xs font-black text-gray-700 uppercase mb-1 tracking-wider">Jabatan <span class="text-red-600">*</span></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-yellow-600">
+                        <i class="fa-solid fa-briefcase text-sm"></i>
+                    </span>
+                    <select id="position" required
+                        class="w-full pl-10 pr-3 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:bg-white outline-none transition">
+                        <option value="" disabled selected>-- Pilih Jabatan --</option>
+                        <option value="Head">Head</option>
+                        <option value="SPV">SPV</option>
+                        <option value="Captain">Captain</option>
+                        <option value="Senior Staff">Senior Staff</option>
+                        <option value="Junior Staff">Junior Staff</option>
+                        <option value="Freelance">Freelance</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- EMAIL AKTIF -->
+            <div>
+                <label class="block text-xs font-black text-gray-700 uppercase mb-1 tracking-wider">Email Aktif <span class="text-red-600">*</span></label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-yellow-600">
+                        <i class="fa-solid fa-envelope text-sm"></i>
+                    </span>
+                    <input type="email" id="email" required placeholder="contoh: peserta@gmail.com"
+                        class="w-full pl-10 pr-3 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-sm font-semibold focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 focus:bg-white outline-none transition">
+                </div>
+                <p class="text-[10px] text-gray-500 mt-1.5 font-medium">*Tiket & Kode Unik otomatis dikirim ke email ini.</p>
+            </div>
+
+            <!-- TOMBOL SUBMIT -->
+            <button type="submit" id="btnSubmit"
+                class="w-full py-3.5 bg-gradient-to-r from-yellow-500 via-yellow-400 to-amber-500 hover:from-yellow-400 hover:to-amber-400 text-red-950 font-black rounded-xl shadow-lg hover:shadow-yellow-500/50 transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 mt-4 text-base border-2 border-yellow-200 uppercase tracking-wider">
+                <span>Daftar & Dapatkan Tiket</span>
+                <i class="fa-solid fa-gift text-lg"></i>
+            </button>
+        </form>
+
+        <!-- FOOTER -->
+        <div class="bg-gray-50 p-4 border-t border-gray-100 text-center text-xs font-bold text-gray-400">
+            &copy; Panitia LUCKYDRAW SPEKTAKULER
+        </div>
+    </div>
+
+    <!-- MODAL POPUP SUKSES DENGAN DISPLAY KODE TIKET UNIK -->
+    <div id="successModal" class="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden z-50">
+        <div id="modalBox" class="bg-white rounded-3xl max-w-sm w-full p-6 text-center card-shadow border-4 border-yellow-500 relative transform transition-all scale-100">
+            <div class="w-20 h-20 bg-gradient-to-tr from-yellow-500 to-amber-300 text-red-950 rounded-full flex items-center justify-center mx-auto -mt-12 mb-3 text-3xl border-4 border-white shadow-xl animate-bounce">
+                <i class="fa-solid fa-crown"></i>
+            </div>
+            
+            <h3 class="text-2xl font-black text-gray-900 mb-1">SELAMAT! 🎉</h3>
+            <p class="text-xs font-bold text-gray-500 mb-3">Pendaftaran Anda Berhasil Terdaftar!</p>
+
+            <!-- DISPLAY KODE TIKET UNIK 4-DIGIT -->
+            <div class="bg-gradient-to-br from-red-950 via-red-900 to-red-950 p-5 rounded-2xl border-2 border-yellow-400 shadow-inner mb-4 relative overflow-hidden">
+                <p class="text-[10px] text-yellow-300 font-black uppercase tracking-widest mb-1">KODE TIKET UNDIAN ANDA</p>
+                <div id="modalCode" class="text-5xl font-black gold-shimmer-text tracking-widest my-1 font-mono">----</div>
+                <p class="text-[9px] text-red-200 tracking-wider font-semibold uppercase">Simpan atau Screenshot Kode Ini</p>
+            </div>
+
+            <div class="bg-gray-50 rounded-xl p-3 text-xs text-gray-600 mb-4 border border-gray-200 text-left space-y-1">
+                <p class="font-bold text-gray-800 flex justify-between"><span>Nama:</span> <span id="modalName" class="text-red-900 font-black">---</span></p>
+                <p class="font-bold text-gray-800 flex justify-between"><span>Email:</span> <span id="modalEmail" class="text-gray-600 font-semibold truncate max-w-[180px]">---</span></p>
+                <div class="mt-2 pt-2 border-t border-gray-200 text-[11px] text-green-700 font-bold flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-circle-check text-green-600 text-sm"></i>
+                    <span>Tiket telah terkirim ke Inbox Email!</span>
+                </div>
+            </div>
+
+            <button onclick="closeModal()" class="w-full py-3 bg-red-950 hover:bg-black text-yellow-400 font-black rounded-xl text-sm border border-yellow-500/50 uppercase tracking-wider transition">
+                Tutup & Selesai
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // KREDENSIAL EMAILJS PANITIA
+        const EMAILJS_CONFIG = {
+            serviceId: "service_36mkkrg",  
+            templateId: "template_5jft6sk",
+            publicKey: "DJ7WBGr-hRhnIKN6K" 
+        };
+
+        (function() {
+            if (EMAILJS_CONFIG.publicKey && EMAILJS_CONFIG.publicKey !== "YOUR_PUBLIC_KEY") {
+                emailjs.init(EMAILJS_CONFIG.publicKey);
+            }
+        })();
+
+        // ANIMASI DYNAMIC SLOT REEL DI HEADER (KOTAK DENGAN EFEK ROLL VERTIKAL)
+        const CASINO_SYMBOLS = ["🍒", "💎", "👑", "🌟", "🔥", "🎰", "7️⃣"];
+        function startHeaderSlotAnimation() {
+            const h1 = document.getElementById('hdrSlot1');
+            const h2 = document.getElementById('hdrSlot2');
+            const h3 = document.getElementById('hdrSlot3');
+
+            setInterval(() => {
+                if (h1) h1.innerText = CASINO_SYMBOLS[Math.floor(Math.random() * CASINO_SYMBOLS.length)];
+            }, 120);
+
+            setInterval(() => {
+                if (h2) h2.innerText = CASINO_SYMBOLS[Math.floor(Math.random() * CASINO_SYMBOLS.length)];
+            }, 160);
+
+            setInterval(() => {
+                if (h3) h3.innerText = CASINO_SYMBOLS[Math.floor(Math.random() * CASINO_SYMBOLS.length)];
+            }, 140);
+        }
+        startHeaderSlotAnimation();
+
+        // JEJAK BINTANG KURSOR
+        document.addEventListener('mousemove', function(e) {
+            if (Math.random() > 0.4) return;
+            createSparkle(e.clientX, e.clientY);
+        });
+        document.addEventListener('touchmove', function(e) {
+            if (e.touches.length > 0) {
+                createSparkle(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        });
+
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle fa-solid fa-star';
+            sparkle.style.left = (x + (Math.random() * 12 - 6)) + 'px';
+            sparkle.style.top = (y + (Math.random() * 12 - 6)) + 'px';
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 800);
+        }
+
+        const PREFIX_MAPPING = {
+            "Head": "9",
+            "SPV": "8",
+            "Captain": "7",
+            "Senior Staff": "6",
+            "Junior Staff": "5",
+            "Freelance": "4"
+        };
+
+        function generateUniqueCode(position) {
+            const prefix = PREFIX_MAPPING[position] || "4";
+            let usedCodes = JSON.parse(localStorage.getItem('luckydraw_used_codes') || '[]');
+            
+            let uniqueCode = "";
+            let isUnique = false;
+            let attempts = 0;
+
+            while (!isUnique && attempts < 1000) {
+                const random3Digits = Math.floor(100 + Math.random() * 900);
+                uniqueCode = prefix + random3Digits;
+                
+                if (!usedCodes.includes(uniqueCode)) {
+                    isUnique = true;
+                    usedCodes.push(uniqueCode);
+                    localStorage.setItem('luckydraw_used_codes', JSON.stringify(usedCodes));
+                }
+                attempts++;
+            }
+
+            return uniqueCode;
+        }
+
+        // ANIMASI ROLLING NOMOR TIKET SAAT SUBMIT SUKSES
+        function animateCodeRoll(targetCode, callback) {
+            const modalCode = document.getElementById('modalCode');
+            let duration = 1200;
+            let intervalTime = 50;
+            let elapsed = 0;
+
+            const prefix = targetCode.charAt(0);
+
+            const interval = setInterval(() => {
+                elapsed += intervalTime;
+                const random3 = Math.floor(100 + Math.random() * 900);
+                modalCode.innerText = prefix + random3;
+
+                if (elapsed >= duration) {
+                    clearInterval(interval);
+                    modalCode.innerText = targetCode;
+                    if (callback) callback();
+                }
+            }, intervalTime);
+        }
+
+        function triggerCoinShower() {
+            for (let i = 0; i < 25; i++) {
+                setTimeout(() => {
+                    const coin = document.createElement('div');
+                    coin.className = 'falling-coin fa-solid fa-coins text-yellow-400 drop-shadow-md';
+                    coin.style.left = Math.random() * 100 + 'vw';
+                    coin.style.animationDuration = (1.8 + Math.random() * 1.2) + 's';
+                    document.body.appendChild(coin);
+                    setTimeout(() => coin.remove(), 3000);
+                }, i * 80);
+            }
+        }
+
+        function playVictorySound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const notes = [261.63, 329.63, 392.00, 523.25];
+                notes.forEach((freq, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime + i * 0.12);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.12 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + i * 0.12);
+                    osc.stop(audioCtx.currentTime + i * 0.12 + 0.3);
+                });
+            } catch(e) {
+                console.log("Audio blocked");
+            }
+        }
+
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 },
+                    colors: ['#FFE259', '#FFA751', '#FF0000', '#FFFFFF']
+                });
+            }
+        }
+
+        // SUBMIT FORM REGISTRASI
+        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const btnSubmit = document.getElementById('btnSubmit');
+            const errorAlert = document.getElementById('errorAlert');
+            errorAlert.classList.add('hidden');
+            
+            const name = document.getElementById('fullName').value.trim();
+            const position = document.getElementById('position').value;
+            const email = document.getElementById('email').value.trim().toLowerCase();
+
+            if (!name || !position || !email) {
+                errorAlert.innerText = "Mohon lengkapi semua kolom pendaftaran!";
+                errorAlert.classList.remove('hidden');
+                return;
+            }
+
+            // CEK EMAIL GANDA / DUPLIKAT
+            let registeredEmails = JSON.parse(localStorage.getItem('luckydraw_registered_emails') || '[]');
+            if (registeredEmails.includes(email)) {
+                errorAlert.innerText = "Email ini sudah terdaftar! Setiap email hanya berhak mendapatkan 1 tiket.";
+                errorAlert.classList.remove('hidden');
+                return;
+            }
+
+            const uniqueCode = generateUniqueCode(position);
+
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Menerbitkan Tiket...</span>`;
+
+            // SIMPAN EMAIL KE DAFTAR TERDAFTAR
+            registeredEmails.push(email);
+            localStorage.setItem('luckydraw_registered_emails', JSON.stringify(registeredEmails));
+
+            document.getElementById('modalName').innerText = name;
+            document.getElementById('modalEmail').innerText = email;
+            document.getElementById('successModal').classList.remove('hidden');
+
+            // ANIMASI ROLLING KODE UNIK
+            animateCodeRoll(uniqueCode, () => {
+                triggerConfetti();
+                triggerCoinShower();
+                playVictorySound();
+            });
+
+            // Kirim EmailJS di Background
+            try {
+                await emailjs.send(
+                    EMAILJS_CONFIG.serviceId,
+                    EMAILJS_CONFIG.templateId,
+                    {
+                        to_name: name,
+                        position: position,
+                        unique_code: uniqueCode,
+                        to_email: email
+                    }
+                );
+            } catch (err) {
+                console.error("EmailJS Error:", err);
+            }
+
+            document.getElementById('registrationForm').reset();
+            btnSubmit.disabled = false;
+            btnSubmit.innerHTML = `<span>Daftar & Dapatkan Tiket</span> <i class="fa-solid fa-gift text-lg"></i>`;
+        });
+
+        function closeModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+    </script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"480c9d8468c44ad3bed3c74fbcc6d6f3","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
